@@ -2,10 +2,15 @@ package config
 
 import (
 	"github.com/spf13/viper"
+
+	"github.com/hnamzian/go-mallbots/internal/grpc"
+	"github.com/hnamzian/go-mallbots/internal/http"
 )
 
 type AppConfig struct {
-	LogLevel string `mapstructure:"logLevel"`
+	LogLevel string          `mapstructure:"logLevel"`
+	Http     http.HttpConfig `mapstructure:"http"`
+	Grpc     grpc.GrpcConfig `mapstructure:"grpc"`
 }
 
 func InitConfig() *AppConfig {
