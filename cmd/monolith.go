@@ -20,7 +20,7 @@ func (a *App) waitForWebServer(ctx context.Context) error {
 		a.logger.Debug().Msg("web server started")
 		defer fmt.Println("web server shut down")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			panic(err)
+		return fmt.Errorf("failed to start web server: %w", err)
 		}
 		return nil
 	})
