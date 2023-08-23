@@ -3,11 +3,22 @@ package main
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"time"
 
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+
+	"github.com/hnamzian/go-mallbots/internal/config"
+	"github.com/rs/zerolog"
 )
+
+type App struct {
+	cfg    *config.AppConfig
+	logger zerolog.Logger
+}
 
 func (a *App) waitForWebServer(ctx context.Context) error {
 	server := http.Server{
@@ -20,7 +31,7 @@ func (a *App) waitForWebServer(ctx context.Context) error {
 		a.logger.Debug().Msg("web server started")
 		defer fmt.Println("web server shut down")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		return fmt.Errorf("failed to start web server: %w", err)
+			return fmt.Errorf("failed to start web server: %w", err)
 		}
 		return nil
 	})
@@ -33,6 +44,48 @@ func (a *App) waitForWebServer(ctx context.Context) error {
 			return err
 		}
 		return nil
+	})
+
+	return group.Wait()
+}
+
+func (a *App) waitForRPC(ctx context.Context) error {
+	opts := []grpc.ServerOption{}
+	server := grpc.NewServer(opts...)
+	reflection.Register(server)
+
+	listener, err := net.Listen("tcp", a.cfg.Grpc.Address())
+	if err != nil {
+		return fmt.Errorf("failed to listen: %w", err)
+	}
+
+	group, gCtx := errgroup.WithContext(ctx)
+
+	group.Go(func() error {
+		if err = server.Serve(listener); err != nil {
+			return fmt.Errorf("failed to serve: %w", err)
+		}
+		return nil
+	})
+	group.Go(func() error {
+		<-gCtx.Done()
+		a.logger.Info().Msg("rpc server to be shutdown")
+
+		timer := time.NewTimer(5 * time.Second)
+		stopped := make(chan struct{}, 1)
+		go func() {
+			server.GracefulStop()
+			close(stopped)
+		}()
+
+		select {
+		case <-timer.C:
+			server.Stop()
+			return fmt.Errorf("failed to gracefully shutdown: %w", ctx.Err())
+		case <-stopped:
+			a.logger.Info().Msg("rpc server gracefully shutdown")
+			return nil
+		}
 	})
 
 	return group.Wait()

@@ -5,13 +5,7 @@ import (
 
 	"github.com/hnamzian/go-mallbots/internal/config"
 	"github.com/hnamzian/go-mallbots/internal/logger"
-	"github.com/rs/zerolog"
 )
-
-type App struct {
-	cfg    *config.AppConfig
-	logger zerolog.Logger
-}
 
 func main() {
 	run()
@@ -27,5 +21,6 @@ func run() {
 	})
 
 	ctx := context.Background()
+
 	app.waitForWebServer(ctx)
 }
