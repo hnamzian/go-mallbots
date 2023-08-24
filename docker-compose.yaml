@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  mallbots:
+    container_name: mallbots
+    hostname: mallbots
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - '8080:8080'
+      - '9090:9090'
+    environment:
+      - CONFIG_PATH=/etc/config/config.yaml
+    volumes:
+      - ./config.yaml:/etc/config/config.yaml
+    depends_on:
+      - postgres
+    command: [ "./wait-for", "postgres:5432", "--", "/mallbots/monolith" ]
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: itsasecret
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+      - './docker/database:/docker-entrypoint-initdb.d'
+
+volumes:
+  pgdata:
