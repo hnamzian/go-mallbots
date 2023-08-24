@@ -14,7 +14,10 @@ func main() {
 }
 
 func run() error {
-	cfg := config.InitConfig()
+	cfg, err := config.InitConfig()
+	if err!= nil {
+        panic(err)
+    }
 	app := &App{
 		cfg: cfg,
 	}
