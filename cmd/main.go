@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 
+	_ "github.com/jackc/pgx/v5/stdlib"
+
 	"github.com/hnamzian/go-mallbots/internal/config"
 	"github.com/hnamzian/go-mallbots/internal/logger"
 )
@@ -11,7 +13,7 @@ func main() {
 	run()
 }
 
-func run() {
+func run() error {
 	cfg := config.InitConfig()
 	app := &App{
 		cfg: cfg,
@@ -20,7 +22,13 @@ func run() {
 		Level: logger.Level(cfg.LogLevel),
 	})
 
-	ctx := context.Background()
+	if err := app.connectDB(); err != nil {
+		return err
+	}
+	defer app.closeDB()
 
+	ctx := context.Background()
 	app.waitForWebServer(ctx)
+
+	return nil
 }
