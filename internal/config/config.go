@@ -1,6 +1,9 @@
 package config
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/spf13/viper"
 
 	"github.com/hnamzian/go-mallbots/internal/grpc"
@@ -15,21 +18,25 @@ type AppConfig struct {
 	PG       pg.PGConfig     `mapstructure:"pg"`
 }
 
-func InitConfig() *AppConfig {
-	viper.SetConfigFile("config.yaml")
+func InitConfig() (*AppConfig, error) {
+	configPath := os.Getenv("CONFIG_PATH")
+	if configPath == "" {
+        return nil, fmt.Errorf("CONFIG_PATH is not set")
+    }
+	viper.SetConfigFile(configPath)
 
 	viper.SetDefault("logLevel", "debug")
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("failed to read config file: %s", err)
 	}
 
 	var config AppConfig
 	err = viper.Unmarshal(&config)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("failed to unmarshal config file: %s", err)
 	}
 
-	return &config
+	return &config, nil
 }
