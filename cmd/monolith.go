@@ -38,11 +38,11 @@ func (a *App) connectDB() error {
 }
 
 func (a *App) closeDB() error {
-	a.logger.Info().Msg("closing database connection")
+	a.logger.Warn().Msg("closing database connection")
 	if err := a.db.Close(); err != nil {
 		return err
 	}
-	a.logger.Info().Msg("database connection closed")
+	a.logger.Warn().Msg("database connection closed")
 	return nil
 }
 
@@ -54,8 +54,8 @@ func (a *App) waitForWebServer(ctx context.Context) error {
 	group, gCtx := errgroup.WithContext(ctx)
 
 	group.Go(func() error {
-		a.logger.Debug().Msg("web server started")
-		defer fmt.Println("web server shut down")
+		a.logger.Info().Msg("web server started")
+		defer a.logger.Warn().Msg("web server shut down")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			return fmt.Errorf("failed to start web server: %w", err)
 		}
@@ -63,10 +63,11 @@ func (a *App) waitForWebServer(ctx context.Context) error {
 	})
 	group.Go(func() error {
 		<-gCtx.Done()
-		fmt.Println("web server to be shutdown")
+		a.logger.Warn().Msg("web server to be shutdown")
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		if err := server.Shutdown(ctx); err != nil {
+			a.logger.Error().Msg("failed to shutdown web server")
 			return err
 		}
 		return nil
@@ -88,6 +89,8 @@ func (a *App) waitForRPC(ctx context.Context) error {
 	group, gCtx := errgroup.WithContext(ctx)
 
 	group.Go(func() error {
+		a.logger.Info().Msg("rpc server started")
+		defer a.logger.Warn().Msg("rpc server shutdown")	
 		if err = server.Serve(listener); err != nil {
 			return fmt.Errorf("failed to serve: %w", err)
 		}
@@ -95,8 +98,7 @@ func (a *App) waitForRPC(ctx context.Context) error {
 	})
 	group.Go(func() error {
 		<-gCtx.Done()
-		a.logger.Info().Msg("rpc server to be shutdown")
-
+		a.logger.Warn().Msg("rpc server to be shutdown")
 		timer := time.NewTimer(5 * time.Second)
 		stopped := make(chan struct{}, 1)
 		go func() {
@@ -109,7 +111,7 @@ func (a *App) waitForRPC(ctx context.Context) error {
 			server.Stop()
 			return fmt.Errorf("failed to gracefully shutdown: %w", ctx.Err())
 		case <-stopped:
-			a.logger.Info().Msg("rpc server gracefully shutdown")
+			a.logger.Warn().Msg("rpc server gracefully shutdown")
 			return nil
 		}
 	})
