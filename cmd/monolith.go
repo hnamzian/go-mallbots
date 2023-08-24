@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net"
 	"net/http"
@@ -17,7 +18,32 @@ import (
 
 type App struct {
 	cfg    *config.AppConfig
+	db     *sql.DB
 	logger zerolog.Logger
+}
+
+func (a *App) connectDB() error {
+	a.logger.Info().Msg("Connecting to database...")
+	db, err := sql.Open("pgx", a.cfg.PG.Connection())
+	if err!= nil {
+		a.logger.Error().Msg(
+			fmt.Sprintf("failed to connect to database: %s", err),
+		)
+		return err
+    }
+	a.db = db
+	a.logger.Info().Msg("Connected to database.")
+
+	return nil
+}
+
+func (a *App) closeDB() error {
+	a.logger.Info().Msg("closing database connection")
+	if err := a.db.Close(); err != nil {
+		return err
+	}
+	a.logger.Info().Msg("database connection closed")
+	return nil
 }
 
 func (a *App) waitForWebServer(ctx context.Context) error {
