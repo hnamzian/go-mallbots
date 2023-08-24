@@ -10,7 +10,6 @@ import (
 
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 
 	"github.com/hnamzian/go-mallbots/internal/config"
 	"github.com/rs/zerolog"
@@ -18,6 +17,7 @@ import (
 
 type App struct {
 	cfg    *config.AppConfig
+	rpc    *grpc.Server
 	db     *sql.DB
 	logger zerolog.Logger
 }
@@ -25,12 +25,12 @@ type App struct {
 func (a *App) connectDB() error {
 	a.logger.Info().Msg("Connecting to database...")
 	db, err := sql.Open("pgx", a.cfg.PG.Connection())
-	if err!= nil {
+	if err != nil {
 		a.logger.Error().Msg(
 			fmt.Sprintf("failed to connect to database: %s", err),
 		)
 		return err
-    }
+	}
 	a.db = db
 	a.logger.Info().Msg("Connected to database.")
 
@@ -77,10 +77,6 @@ func (a *App) waitForWebServer(ctx context.Context) error {
 }
 
 func (a *App) waitForRPC(ctx context.Context) error {
-	opts := []grpc.ServerOption{}
-	server := grpc.NewServer(opts...)
-	reflection.Register(server)
-
 	listener, err := net.Listen("tcp", a.cfg.Grpc.Address())
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
@@ -90,8 +86,8 @@ func (a *App) waitForRPC(ctx context.Context) error {
 
 	group.Go(func() error {
 		a.logger.Info().Msg("rpc server started")
-		defer a.logger.Warn().Msg("rpc server shutdown")	
-		if err = server.Serve(listener); err != nil {
+		defer a.logger.Warn().Msg("rpc server shutdown")
+		if err = a.rpc.Serve(listener); err != nil {
 			return fmt.Errorf("failed to serve: %w", err)
 		}
 		return nil
@@ -102,13 +98,13 @@ func (a *App) waitForRPC(ctx context.Context) error {
 		timer := time.NewTimer(5 * time.Second)
 		stopped := make(chan struct{}, 1)
 		go func() {
-			server.GracefulStop()
+			a.rpc.GracefulStop()
 			close(stopped)
 		}()
 
 		select {
 		case <-timer.C:
-			server.Stop()
+			a.rpc.Stop()
 			return fmt.Errorf("failed to gracefully shutdown: %w", ctx.Err())
 		case <-stopped:
 			a.logger.Warn().Msg("rpc server gracefully shutdown")

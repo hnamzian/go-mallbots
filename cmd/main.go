@@ -2,6 +2,8 @@ package main
 
 import (
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	"github.com/hnamzian/go-mallbots/internal/config"
 	"github.com/hnamzian/go-mallbots/internal/logger"
@@ -28,6 +30,10 @@ func run() error {
 		return err
 	}
 	defer app.closeDB()
+
+	opts := []grpc.ServerOption{}
+	app.rpc = grpc.NewServer(opts...)
+	reflection.Register(app.rpc)
 
 	w := waiter.NewWaiter()
 	w.Add(
