@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+option go_package = "github.com/hnamzian/go-mallbots/customers/customerspb";
+
+package customerspb;
+
+service customers {
+    rpc RegisterCustomer(RegisterCustomerRequest) returns (RegisterCustomerResponse);
+    rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
+    rpc EnableCustomer(EnableCustomerRequest) returns (EnableCustomerResponse);
+    rpc DisableCustomer(DisableCustomerRequest) returns (DisableCustomerResponse);
+}
+
+message Customer {
+    string id = 1;
+    string name = 2;
+    string sms_number = 3;
+    string enabled = 4;
+}
+
+message RegisterCustomerRequest {
+    string namee = 1;
+    string sms_number = 2;
+}
+message RegisterCustomerResponse {
+    string id = 1;
+}
+
+message GetCustomerRequest {
+    string id = 1;
+}
+message GetCustomerResponse {
+    Customer customer = 1;
+}
+
+message EnableCustomerRequest {
+    string id = 1;
+}
+message EnableCustomerResponse {}
+
+message DisableCustomerRequest {
+    string id = 1;
+}
+message DisableCustomerResponse {}
+
