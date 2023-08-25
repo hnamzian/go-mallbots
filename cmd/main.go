@@ -8,6 +8,8 @@ import (
 	"github.com/hnamzian/go-mallbots/internal/config"
 	"github.com/hnamzian/go-mallbots/internal/logger"
 	"github.com/hnamzian/go-mallbots/internal/waiter"
+	"github.com/hnamzian/go-mallbots/internal/module"
+	"github.com/hnamzian/go-mallbots/customers"
 )
 
 func main() {
@@ -31,14 +33,23 @@ func run() error {
 	}
 	defer app.closeDB()
 
+	app.waiter = waiter.NewWaiter()
+
 	opts := []grpc.ServerOption{}
 	app.rpc = grpc.NewServer(opts...)
 	reflection.Register(app.rpc)
 
-	w := waiter.NewWaiter()
-	w.Add(
+	app.modules = []module.Module{
+		customers.Module{},
+	}
+	if err = app.startupModules(); err!= nil {
+		return err
+    }
+	
+	app.waiter.Add(
 		app.waitForWebServer,
 		app.waitForRPC,
 	)
-	return w.Wait()
+	
+	return app.waiter.Wait()
 }
