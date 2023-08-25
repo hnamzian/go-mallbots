@@ -12,8 +12,10 @@ import (
 type WaitFunc func(ctx context.Context) error
 
 type Waiter interface {
-	Add()
-	Wait()
+	Add(fns ...WaitFunc)
+	Wait() error
+	Context() context.Context
+	CancelFunc() context.CancelFunc
 }
 
 type waiter struct {
@@ -22,7 +24,7 @@ type waiter struct {
 	fns    []WaitFunc
 }
 
-func NewWaiter() *waiter {
+func NewWaiter() Waiter {
 	w := &waiter{
 		fns: []WaitFunc{},
 	}
@@ -53,4 +55,12 @@ func (w *waiter) Wait() error {
 	}
 
 	return group.Wait()
+}
+
+func (w *waiter) Context() context.Context {
+	return w.ctx
+}
+
+func (w *waiter) CancelFunc() context.CancelFunc {
+	return w.cancel
 }
