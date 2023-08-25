@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 
@@ -20,6 +21,7 @@ import (
 type App struct {
 	cfg     *config.AppConfig
 	rpc     *grpc.Server
+	mux     *chi.Mux
 	db      *sql.DB
 	modules []module.Module
 	logger  zerolog.Logger
@@ -37,6 +39,9 @@ func (a *App) DB() *sql.DB {
 }
 func (a *App) RPC() *grpc.Server {
 	return a.rpc
+}
+func (a *App) Mux() *chi.Mux {
+	return a.mux
 }
 
 func (a *App) startupModules() error {
@@ -74,7 +79,8 @@ func (a *App) closeDB() error {
 
 func (a *App) waitForWebServer(ctx context.Context) error {
 	server := http.Server{
-		Addr: a.cfg.Http.Address(),
+		Addr:    a.cfg.Http.Address(),
+		Handler: a.mux,
 	}
 
 	group, gCtx := errgroup.WithContext(ctx)

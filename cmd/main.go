@@ -4,6 +4,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"github.com/go-chi/chi/v5"
 
 	"github.com/hnamzian/go-mallbots/internal/config"
 	"github.com/hnamzian/go-mallbots/internal/logger"
@@ -38,6 +39,8 @@ func run() error {
 	opts := []grpc.ServerOption{}
 	app.rpc = grpc.NewServer(opts...)
 	reflection.Register(app.rpc)
+
+	app.mux = chi.NewMux()
 
 	app.modules = []module.Module{
 		customers.Module{},
