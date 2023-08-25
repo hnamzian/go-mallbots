@@ -6,8 +6,7 @@ down:
 	docker-compose down -v
 run:
 	go run ./cmd/
-pbgen:
-	@protoc \
-	--go_out=. --go_opt=paths=source_relative \
- 	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
-	./*/*pb/*.proto
+generate:
+	@echo running code generation
+	@go generate ./...
+	@echo done
