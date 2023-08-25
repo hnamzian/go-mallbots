@@ -43,11 +43,11 @@ type (
     }
 )
 
-func NewApplication() *Application {
-	return &Application{}
+func NewApplication(customers domain.CustomersRepository) Application {
+	return Application{customers}
 }
 
-func (a *Application) RegisterCustomer(ctx context.Context, register *RegisterCustomer) error{
+func (a Application) RegisterCustomer(ctx context.Context, register RegisterCustomer) error{
 	customer, err := domain.RegisterCustomer(register.ID, register.Name, register.SmsNumber)
 	if err!= nil {
         return err
@@ -55,7 +55,7 @@ func (a *Application) RegisterCustomer(ctx context.Context, register *RegisterCu
 	return a.customers.Save(ctx, customer)
 }
 
-func (a *Application) AuthorizeCustomer(ctx context.Context, authorize AuthorizeCustomer) error {
+func (a Application) AuthorizeCustomer(ctx context.Context, authorize AuthorizeCustomer) error {
 	customer, err := a.customers.Get(ctx, authorize.ID)
 	if err!= nil {
         return err
@@ -66,7 +66,7 @@ func (a *Application) AuthorizeCustomer(ctx context.Context, authorize Authorize
 	return nil
 }
 
-func (a *Application) GetCustomer(ctx context.Context, get GetCustomer) (*domain.Customer, error) {
+func (a Application) GetCustomer(ctx context.Context, get GetCustomer) (*domain.Customer, error) {
 	customer, err := a.customers.Get(ctx, get.ID)
 	if err!= nil {
         return nil, err
@@ -74,7 +74,7 @@ func (a *Application) GetCustomer(ctx context.Context, get GetCustomer) (*domain
 	return customer, nil
 }
 
-func (a *Application) EnableCustomer(ctx context.Context, enable EnableCustomer) error {
+func (a Application) EnableCustomer(ctx context.Context, enable EnableCustomer) error {
 	customer, err := a.customers.Get(ctx, enable.ID)
 	if err!= nil {
         return err
@@ -88,7 +88,7 @@ func (a *Application) EnableCustomer(ctx context.Context, enable EnableCustomer)
 	return nil
 }
 
-func (a *Application) DisableCustomer(ctx context.Context, disable DisableCustomer) error {
+func (a Application) DisableCustomer(ctx context.Context, disable DisableCustomer) error {
 	customer, err := a.customers.Get(ctx, disable.ID)
 	if err!= nil {
         return err
