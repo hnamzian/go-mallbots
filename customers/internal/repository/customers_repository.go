@@ -20,7 +20,7 @@ func NewCustomersRepository(tableName string, db *sql.DB) *CustomersRepository {
 func (r *CustomersRepository) Save(ctx context.Context, customer *domain.Customer) error {
 	query := fmt.Sprintf("INSERT INTO %s (id, name, sms_number, enabled) VALUES ($1, $2, $3, $4)", r.tableName)
 
-	_, err := r.db.ExecContext(ctx, query, customer.ID, customer.Name, customer.SmsNumber)
+	_, err := r.db.ExecContext(ctx, query, customer.ID, customer.Name, customer.SmsNumber, customer.Enabled)
 
 	return err
 }
@@ -31,7 +31,7 @@ func (r *CustomersRepository) Get(ctx context.Context, customerID string) (*doma
 	customer := &domain.Customer{
 		ID: customerID,
 	}
-	err := r.db.QueryRowContext(ctx, query, customerID).Scan(&customer.Name, &customer.SmsNumber, &customer.Enabled)
+	err := r.db.QueryRowContext(ctx, query, customerID).Scan(&customer.ID, &customer.Name, &customer.SmsNumber, &customer.Enabled)
 	
 	return customer, err
 }
