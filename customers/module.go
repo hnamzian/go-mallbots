@@ -6,17 +6,20 @@ import (
 	"github.com/hnamzian/go-mallbots/customers/internal/application"
 	"github.com/hnamzian/go-mallbots/customers/internal/grpc"
 	"github.com/hnamzian/go-mallbots/customers/internal/repository"
+	"github.com/hnamzian/go-mallbots/customers/internal/logger"
 	"github.com/hnamzian/go-mallbots/internal/module"
 )
 
 type Module struct {}
 
-func (m Module) Startup(ctx context.Context, app module.Core) error{
-	customers := repository.NewCustomersRepository("customers.customers", app.DB())
+func (m Module) Startup(ctx context.Context, core module.Core) error{
+	customers := repository.NewCustomersRepository("customers.customers", core.DB())
 
-	customersApp := application.NewApplication(customers)
+	var app application.App
+	app = application.NewApplication(customers)
+	app = logger.NewApplication(app, core.Logger())
 
-	grpc.RegisterServer(app.RPC(), customersApp)
+	grpc.RegisterServer(core.RPC(), app)
 
 	return nil
 }
