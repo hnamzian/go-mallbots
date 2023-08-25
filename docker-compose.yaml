@@ -23,6 +23,7 @@ services:
     image: postgres:12-alpine
     restart: always
     environment:
+      POSTGRES_USER: mallbots_user
       POSTGRES_PASSWORD: itsasecret
     ports:
       - '5432:5432'
