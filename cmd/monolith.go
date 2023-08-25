@@ -12,14 +12,40 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/hnamzian/go-mallbots/internal/config"
+	"github.com/hnamzian/go-mallbots/internal/module"
+	"github.com/hnamzian/go-mallbots/internal/waiter"
 	"github.com/rs/zerolog"
 )
 
 type App struct {
-	cfg    *config.AppConfig
-	rpc    *grpc.Server
-	db     *sql.DB
-	logger zerolog.Logger
+	cfg     *config.AppConfig
+	rpc     *grpc.Server
+	db      *sql.DB
+	modules []module.Module
+	logger  zerolog.Logger
+	waiter  waiter.Waiter
+}
+
+func (a *App) Config() *config.AppConfig {
+	return a.cfg
+}
+func (a *App) Logger() zerolog.Logger {
+	return a.logger
+}
+func (a *App) DB() *sql.DB {
+	return a.db
+}
+func (a *App) RPC() *grpc.Server {
+	return a.rpc
+}
+
+func (a *App) startupModules() error {
+	for _, m := range a.modules {
+		if err := m.Startup(a.waiter.Context(), a); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (a *App) connectDB() error {
