@@ -8,6 +8,14 @@ import (
 )
 
 type (
+	App interface {
+		RegisterCustomer(ctx context.Context, register RegisterCustomer) error
+		AuthorizeCustomer(ctx context.Context, authorize AuthorizeCustomer) error
+		GetCustomer(ctx context.Context, get GetCustomer) (*domain.Customer, error)
+		EnableCustomer(ctx context.Context, enable EnableCustomer) error
+		DisableCustomer(ctx context.Context, disable DisableCustomer) error
+	}
+	
 	Application struct{
 		customers domain.CustomersRepository
 	}
@@ -47,8 +55,8 @@ func (a *Application) RegisterCustomer(ctx context.Context, register *RegisterCu
 	return a.customers.Save(ctx, customer)
 }
 
-func (a *Application) AuthorizeCustomer(ctx context.Context, id string) error {
-	customer, err := a.customers.Get(ctx, id)
+func (a *Application) AuthorizeCustomer(ctx context.Context, authorize AuthorizeCustomer) error {
+	customer, err := a.customers.Get(ctx, authorize.ID)
 	if err!= nil {
         return err
     }
@@ -58,16 +66,16 @@ func (a *Application) AuthorizeCustomer(ctx context.Context, id string) error {
 	return nil
 }
 
-func (a *Application) GetCustomer(ctx context.Context, id string) (*domain.Customer, error) {
-	customer, err := a.customers.Get(ctx, id)
+func (a *Application) GetCustomer(ctx context.Context, get GetCustomer) (*domain.Customer, error) {
+	customer, err := a.customers.Get(ctx, get.ID)
 	if err!= nil {
         return nil, err
     }
 	return customer, nil
 }
 
-func (a *Application) EnableCustomer(ctx context.Context, id string) error {
-	customer, err := a.customers.Get(ctx, id)
+func (a *Application) EnableCustomer(ctx context.Context, enable EnableCustomer) error {
+	customer, err := a.customers.Get(ctx, enable.ID)
 	if err!= nil {
         return err
     }
@@ -80,8 +88,8 @@ func (a *Application) EnableCustomer(ctx context.Context, id string) error {
 	return nil
 }
 
-func (a *Application) DisableCustomer(ctx context.Context, id string) error {
-	customer, err := a.customers.Get(ctx, id)
+func (a *Application) DisableCustomer(ctx context.Context, disable DisableCustomer) error {
+	customer, err := a.customers.Get(ctx, disable.ID)
 	if err!= nil {
         return err
     }
