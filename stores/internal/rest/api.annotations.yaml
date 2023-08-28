@@ -1,0 +1,27 @@
+type: google.api.Service
+config_version: 3
+http:
+  rules:
+    - selector: storespb.Stores.CreateStore
+      post: /api/stores
+      body: "*"
+    - selector: storespb.Stores.GetStores
+      get: /api/stores
+    - selector: storespb.Stores.GetStore
+      get: /api/stores/{id}
+    - selector: storespb.Stores.EnableParticipation
+      put: /api/stores/{id}/participating
+      body: "*"
+    - selector: storespb.Stores.DisableParticipation
+      delete: /api/stores/{id}/participating
+    - selector: storespb.Stores.GetParticipatingStores
+      get: /api/stores/participating
+    - selector: storespb.Stores.AddProduct
+      post: /api/stores/{store_id}/products
+      body: "*"
+    - selector: storespb.Stores.GetProduct
+      get: /api/stores/products/{id}
+    - selector: storespb.Stores.RemoveProduct
+      delete: /api/stores/products/{id}
+    - selector: storespb.Stores.GetCatalog
+      get: /api/stores/{store_id}/products
