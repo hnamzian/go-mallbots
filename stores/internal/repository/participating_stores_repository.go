@@ -14,11 +14,11 @@ type ParticipatingStoreRepository struct {
 	db        *sql.DB
 }
 
-func NewParticipatingStoreRepository(tableName string, db *sql.DB) ParticipatingStoreRepository {
-	return ParticipatingStoreRepository{tableName: tableName, db: db}
+func NewParticipatingStoreRepository(tableName string, db *sql.DB) *ParticipatingStoreRepository {
+	return &ParticipatingStoreRepository{tableName: tableName, db: db}
 }
 
-func (r ParticipatingStoreRepository) FindAll(ctx context.Context) (stores []*domain.Store, err error) {
+func (r *ParticipatingStoreRepository) GetAll(ctx context.Context) (stores []*domain.Store, err error) {
 	query := fmt.Sprintf("SELECT id, name, location, participating FROM %s WHERE participating is true", r.tableName)
 
 	rows, err := r.db.QueryContext(ctx, query)
