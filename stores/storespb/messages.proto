@@ -6,7 +6,7 @@ message Store {
     string id = 1;
     string name = 2;
     string location = 3;
-    bool participatingn = 4;
+    bool participating = 4;
 }
 
 message Product {
@@ -15,5 +15,5 @@ message Product {
     string name = 3;
     string description = 4;
     string sku = 5;
-    string price = 6;
+    double price = 6;
 }

@@ -59,7 +59,7 @@ message AddProductRequest {
     string name = 2;
     string description = 3;
     string sku = 4;
-    string price = 5;
+    double price = 5;
 }
 message AddProductResponse {
     string id = 1;
