@@ -25,6 +25,15 @@ const (
 	BasketCheckedOut BasketStatus = "CheckedOut"
 )
 
+func (s BasketStatus) String() string {
+	switch s {
+	case BasketOpen, BasketCancelled, BasketCheckedOut:
+		return string(s)
+	default:
+		return ""
+	}
+}
+
 type Basket struct {
 	ID         string
 	CustomerID string
@@ -85,7 +94,7 @@ func (b *Basket) AddItem(store *Store, product *Product, quantity int) error {
 		return ErrQuantityCannotBeNegative
 	}
 
-	for i, item := range(b.Items) {
+	for i, item := range b.Items {
 		if item.StoreID == store.ID && item.ProductID == product.ID {
 			b.Items[i].Quantity += quantity
 			return nil
@@ -117,7 +126,7 @@ func (b *Basket) RemoveItem(product *Product, quantity int) error {
 		return ErrQuantityCannotBeNegative
 	}
 
-	for i, item := range(b.Items) {
+	for i, item := range b.Items {
 		if item.ProductID == product.ID && item.StoreID == product.StoreID {
 			b.Items[i].Quantity -= quantity
 
