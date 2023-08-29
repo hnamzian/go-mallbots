@@ -33,7 +33,7 @@ func CreateStore(id, name, location string) (*Store, error) {
 	}, nil
 }
 
-func (s *Store) EnableParticipating() error {
+func (s *Store) EnableParticipation() error {
 	if s.Participating {
 		return ErrStoreIsAlreadyParticipating
 	}
@@ -41,7 +41,7 @@ func (s *Store) EnableParticipating() error {
 	return nil
 }
 
-func (s *Store) DisableParticipating() error {
+func (s *Store) DisableParticipation() error {
 	if !s.Participating {
 		return ErrStoreIsAlreadyNotParticipating
     }
