@@ -3,7 +3,7 @@ package domain
 import "context"
 
 type StoreRepository interface {
-	Svae(ctx context.Context, store *Store) error
+	Save(ctx context.Context, store *Store) error
 	GetAll(ctx context.Context) ([]*Store, error)
 	Get(ctx context.Context, id string) (*Store, error)
 	Update(ctx context.Context, store *Store) error
