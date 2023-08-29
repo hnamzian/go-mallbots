@@ -6,6 +6,7 @@ import (
 	"github.com/hnamzian/go-mallbots/internal/module"
 	"github.com/hnamzian/go-mallbots/stores/internal/application"
 	"github.com/hnamzian/go-mallbots/stores/internal/grpc"
+	"github.com/hnamzian/go-mallbots/stores/internal/rest"
 	"github.com/hnamzian/go-mallbots/stores/internal/repository"
 	"github.com/hnamzian/go-mallbots/stores/internal/logger"
 )
@@ -22,6 +23,9 @@ func (m Module) Startup(ctx context.Context, core module.Core) error {
 	app = logger.NewApplication(app, core.Logger())
 
 	grpc.RegisterServer(core.RPC(), app)
+	if err := rest.RegisterGateway(ctx, core.Mux(), core.Config().Grpc.Address()); err!= nil {
+		return err
+	}
 
 	return nil
 }
