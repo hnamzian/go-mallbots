@@ -7,11 +7,12 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/hnamzian/go-mallbots/customers"
+	"github.com/hnamzian/go-mallbots/basket"
+	"github.com/hnamzian/go-mallbots/stores"
 	"github.com/hnamzian/go-mallbots/internal/config"
 	"github.com/hnamzian/go-mallbots/internal/logger"
 	"github.com/hnamzian/go-mallbots/internal/module"
 	"github.com/hnamzian/go-mallbots/internal/waiter"
-	"github.com/hnamzian/go-mallbots/stores"
 )
 
 func main() {
@@ -46,6 +47,7 @@ func run() error {
 	app.modules = []module.Module{
 		customers.Module{},
 		stores.Module{},
+		baskets.Module{},
 	}
 	if err = app.startupModules(); err != nil {
 		return err
