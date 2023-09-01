@@ -5,6 +5,6 @@ type Item struct {
 	StoreID     string
 	ProductName string
 	StoreName   string
-	Price       int32
-	Quantity    int32
+	Price       float64
+	Quantity    int
 }
