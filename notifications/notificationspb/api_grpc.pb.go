@@ -29,7 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotificationsServiceClient interface {
 	NotifyOrderCreated(ctx context.Context, in *NotifyOrderCreatedRequest, opts ...grpc.CallOption) (*NotifyOrderCreatedResponse, error)
-	NotifyOrderCanceled(ctx context.Context, in *NotifyOrderCanceledResponse, opts ...grpc.CallOption) (*NotifyOrderCanceledResponse, error)
+	NotifyOrderCanceled(ctx context.Context, in *NotifyOrderCanceledRequest, opts ...grpc.CallOption) (*NotifyOrderCanceledResponse, error)
 	NotifyOrderReady(ctx context.Context, in *NotifyOrderReadyRequest, opts ...grpc.CallOption) (*NotifyOrderReadyResponse, error)
 }
 
@@ -50,7 +50,7 @@ func (c *notificationsServiceClient) NotifyOrderCreated(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *notificationsServiceClient) NotifyOrderCanceled(ctx context.Context, in *NotifyOrderCanceledResponse, opts ...grpc.CallOption) (*NotifyOrderCanceledResponse, error) {
+func (c *notificationsServiceClient) NotifyOrderCanceled(ctx context.Context, in *NotifyOrderCanceledRequest, opts ...grpc.CallOption) (*NotifyOrderCanceledResponse, error) {
 	out := new(NotifyOrderCanceledResponse)
 	err := c.cc.Invoke(ctx, NotificationsService_NotifyOrderCanceled_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -73,7 +73,7 @@ func (c *notificationsServiceClient) NotifyOrderReady(ctx context.Context, in *N
 // for forward compatibility
 type NotificationsServiceServer interface {
 	NotifyOrderCreated(context.Context, *NotifyOrderCreatedRequest) (*NotifyOrderCreatedResponse, error)
-	NotifyOrderCanceled(context.Context, *NotifyOrderCanceledResponse) (*NotifyOrderCanceledResponse, error)
+	NotifyOrderCanceled(context.Context, *NotifyOrderCanceledRequest) (*NotifyOrderCanceledResponse, error)
 	NotifyOrderReady(context.Context, *NotifyOrderReadyRequest) (*NotifyOrderReadyResponse, error)
 	mustEmbedUnimplementedNotificationsServiceServer()
 }
@@ -85,7 +85,7 @@ type UnimplementedNotificationsServiceServer struct {
 func (UnimplementedNotificationsServiceServer) NotifyOrderCreated(context.Context, *NotifyOrderCreatedRequest) (*NotifyOrderCreatedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NotifyOrderCreated not implemented")
 }
-func (UnimplementedNotificationsServiceServer) NotifyOrderCanceled(context.Context, *NotifyOrderCanceledResponse) (*NotifyOrderCanceledResponse, error) {
+func (UnimplementedNotificationsServiceServer) NotifyOrderCanceled(context.Context, *NotifyOrderCanceledRequest) (*NotifyOrderCanceledResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NotifyOrderCanceled not implemented")
 }
 func (UnimplementedNotificationsServiceServer) NotifyOrderReady(context.Context, *NotifyOrderReadyRequest) (*NotifyOrderReadyResponse, error) {
@@ -123,7 +123,7 @@ func _NotificationsService_NotifyOrderCreated_Handler(srv interface{}, ctx conte
 }
 
 func _NotificationsService_NotifyOrderCanceled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NotifyOrderCanceledResponse)
+	in := new(NotifyOrderCanceledRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func _NotificationsService_NotifyOrderCanceled_Handler(srv interface{}, ctx cont
 		FullMethod: NotificationsService_NotifyOrderCanceled_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificationsServiceServer).NotifyOrderCanceled(ctx, req.(*NotifyOrderCanceledResponse))
+		return srv.(NotificationsServiceServer).NotifyOrderCanceled(ctx, req.(*NotifyOrderCanceledRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

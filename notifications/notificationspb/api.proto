@@ -6,7 +6,7 @@ import "notificationspb/messages.proto";
 
 service NotificationsService {
     rpc NotifyOrderCreated(NotifyOrderCreatedRequest) returns (NotifyOrderCreatedResponse);
-    rpc NotifyOrderCanceled(NotifyOrderCanceledResponse) returns (NotifyOrderCanceledResponse);
+    rpc NotifyOrderCanceled(NotifyOrderCanceledRequest) returns (NotifyOrderCanceledResponse);
     rpc NotifyOrderReady(NotifyOrderReadyRequest) returns (NotifyOrderReadyResponse);
 }
 
