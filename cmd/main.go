@@ -13,6 +13,7 @@ import (
 	"github.com/hnamzian/go-mallbots/internal/module"
 	"github.com/hnamzian/go-mallbots/internal/waiter"
 	"github.com/hnamzian/go-mallbots/notifications"
+	"github.com/hnamzian/go-mallbots/payments"
 	"github.com/hnamzian/go-mallbots/stores"
 )
 
@@ -50,6 +51,7 @@ func run() error {
 		stores.Module{},
 		baskets.Module{},
 		notifications.Module{},
+		payments.Module{},
 	}
 	if err = app.startupModules(); err != nil {
 		return err
