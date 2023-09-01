@@ -17,3 +17,16 @@ func (s InvoiceStatus) String() string {
 		return string(InvoiceUnknown)
 	}
 }
+
+func ToInvoiceStatus(status string) InvoiceStatus {
+	switch status {
+	case string(InvoicePending):
+		return InvoicePending
+	case string(InvoicePaid):
+		return InvoicePaid
+	case string(InvoiceCancelled):
+		return InvoiceCancelled
+	default:
+		return InvoiceUnknown
+	}
+}

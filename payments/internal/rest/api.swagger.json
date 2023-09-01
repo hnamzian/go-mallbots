@@ -100,13 +100,19 @@
         "customerId": {
           "type": "string"
         },
-        "paymentId": {
-          "type": "string"
+        "amount": {
+          "type": "number",
+          "format": "double"
         }
       }
     },
     "paymentspbAuthorizePaymentResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "paymentspbCancelInvoiceResponse": {
       "type": "object"

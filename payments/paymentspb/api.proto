@@ -17,19 +17,21 @@ service PaymentsService {
 
 message AuthorizePaymentRequest {
     string customer_id = 1;
-    string payment_id = 2;
+    double amount = 2;
 }
 
-message AuthorizePaymentResponse {}
+message AuthorizePaymentResponse {
+    string id = 1;
+}
 
 message ConfirmPaymentRequest {
-    string payment_id = 2;
+    string id = 2;
 }
 
 message ConfirmPaymentResponse {}
 
 message GetPaymentRequest {
-    string payment_id = 1;
+    string id = 1;
 }
 
 message GetPaymentResponse {
@@ -47,7 +49,7 @@ message CreateInvoiceResponse {
 }
 
 message AdjustInvoiceRequest {
-    string invoice_id = 1;
+    string id = 1;
     double amount = 2;
 }
 
