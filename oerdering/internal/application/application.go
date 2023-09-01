@@ -7,6 +7,14 @@ import (
 	"github.com/stackus/errors"
 )
 
+type App interface {
+	CreateOrder(ctx context.Context, create CreateOrder) error
+	GetOrder(ctx context.Context, get GetOrder) (*domain.Order, error)
+	CancelOrder(ctx context.Context, cancel CancelOrder) error
+	ReadyOrder(ctx context.Context, ready ReadyOrder) error
+	CompletedOrder(ctx context.Context, complete CompletedOrder) error
+}
+
 type Application struct {
 	orders        domain.OrderRepository
 	customers     domain.CustomerRepository
