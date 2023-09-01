@@ -7,6 +7,7 @@ import (
 	"github.com/hnamzian/go-mallbots/payments/internal/repository"
 	"github.com/hnamzian/go-mallbots/payments/internal/logger"
 	"github.com/hnamzian/go-mallbots/payments/internal/grpc"
+	"github.com/hnamzian/go-mallbots/payments/internal/rest"
 	"github.com/hnamzian/go-mallbots/internal/module"
 )
 
@@ -27,6 +28,13 @@ func (m Module) Startup(ctx context.Context, core module.Core) error {
 	app = logger.NewApplication(core.Logger(), app)
 
 	grpc.RegisterServer(core.RPC(), app)
+
+	if err = rest.RegisterGateway(ctx, core.Mux(), core.Config().Grpc.Address()); err != nil {
+		return err
+	}
+	if err = rest.RegisterSwagger(core.Mux()); err != nil {
+		return err
+	}
 	
 	return nil
 }
