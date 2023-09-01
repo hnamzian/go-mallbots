@@ -6,13 +6,14 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	baskets "github.com/hnamzian/go-mallbots/basket"
 	"github.com/hnamzian/go-mallbots/customers"
-	"github.com/hnamzian/go-mallbots/basket"
-	"github.com/hnamzian/go-mallbots/stores"
 	"github.com/hnamzian/go-mallbots/internal/config"
 	"github.com/hnamzian/go-mallbots/internal/logger"
 	"github.com/hnamzian/go-mallbots/internal/module"
 	"github.com/hnamzian/go-mallbots/internal/waiter"
+	"github.com/hnamzian/go-mallbots/notifications"
+	"github.com/hnamzian/go-mallbots/stores"
 )
 
 func main() {
@@ -48,6 +49,7 @@ func run() error {
 		customers.Module{},
 		stores.Module{},
 		baskets.Module{},
+		notifications.Module{},
 	}
 	if err = app.startupModules(); err != nil {
 		return err
