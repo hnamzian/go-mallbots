@@ -229,7 +229,7 @@
     "depotpbOrderItem": {
       "type": "object",
       "properties": {
-        "productName": {
+        "productId": {
           "type": "string"
         },
         "storeId": {
