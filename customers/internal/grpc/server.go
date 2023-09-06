@@ -31,6 +31,16 @@ func (s Server) RegisterCustomer(ctx context.Context, request *customerspb.Regis
 	return &customerspb.RegisterCustomerResponse{Id: id}, nil
 }
 
+func (s Server) AuthorizeCustomer(ctx context.Context, request *customerspb.AuthorizeCustomerRequest) (*customerspb.AuthorizeCustomerResponse, error) {
+	err := s.app.AuthorizeCustomer(ctx, application.AuthorizeCustomer{
+		ID: request.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &customerspb.AuthorizeCustomerResponse{}, nil
+}
+
 func (s Server) GetCustomer(ctx context.Context, request *customerspb.GetCustomerRequest) (*customerspb.GetCustomerResponse, error) {
 	customer, err := s.app.GetCustomer(ctx, application.GetCustomer{
 		ID: request.Id,
