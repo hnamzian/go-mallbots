@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Customers_RegisterCustomer_FullMethodName = "/customerspb.Customers/RegisterCustomer"
-	Customers_GetCustomer_FullMethodName      = "/customerspb.Customers/GetCustomer"
-	Customers_EnableCustomer_FullMethodName   = "/customerspb.Customers/EnableCustomer"
-	Customers_DisableCustomer_FullMethodName  = "/customerspb.Customers/DisableCustomer"
+	Customers_RegisterCustomer_FullMethodName  = "/customerspb.Customers/RegisterCustomer"
+	Customers_AuthorizeCustomer_FullMethodName = "/customerspb.Customers/AuthorizeCustomer"
+	Customers_GetCustomer_FullMethodName       = "/customerspb.Customers/GetCustomer"
+	Customers_EnableCustomer_FullMethodName    = "/customerspb.Customers/EnableCustomer"
+	Customers_DisableCustomer_FullMethodName   = "/customerspb.Customers/DisableCustomer"
 )
 
 // CustomersClient is the client API for Customers service.
@@ -30,6 +31,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CustomersClient interface {
 	RegisterCustomer(ctx context.Context, in *RegisterCustomerRequest, opts ...grpc.CallOption) (*RegisterCustomerResponse, error)
+	AuthorizeCustomer(ctx context.Context, in *AuthorizeCustomerRequest, opts ...grpc.CallOption) (*AuthorizeCustomerResponse, error)
 	GetCustomer(ctx context.Context, in *GetCustomerRequest, opts ...grpc.CallOption) (*GetCustomerResponse, error)
 	EnableCustomer(ctx context.Context, in *EnableCustomerRequest, opts ...grpc.CallOption) (*EnableCustomerResponse, error)
 	DisableCustomer(ctx context.Context, in *DisableCustomerRequest, opts ...grpc.CallOption) (*DisableCustomerResponse, error)
@@ -46,6 +48,15 @@ func NewCustomersClient(cc grpc.ClientConnInterface) CustomersClient {
 func (c *customersClient) RegisterCustomer(ctx context.Context, in *RegisterCustomerRequest, opts ...grpc.CallOption) (*RegisterCustomerResponse, error) {
 	out := new(RegisterCustomerResponse)
 	err := c.cc.Invoke(ctx, Customers_RegisterCustomer_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *customersClient) AuthorizeCustomer(ctx context.Context, in *AuthorizeCustomerRequest, opts ...grpc.CallOption) (*AuthorizeCustomerResponse, error) {
+	out := new(AuthorizeCustomerResponse)
+	err := c.cc.Invoke(ctx, Customers_AuthorizeCustomer_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +95,7 @@ func (c *customersClient) DisableCustomer(ctx context.Context, in *DisableCustom
 // for forward compatibility
 type CustomersServer interface {
 	RegisterCustomer(context.Context, *RegisterCustomerRequest) (*RegisterCustomerResponse, error)
+	AuthorizeCustomer(context.Context, *AuthorizeCustomerRequest) (*AuthorizeCustomerResponse, error)
 	GetCustomer(context.Context, *GetCustomerRequest) (*GetCustomerResponse, error)
 	EnableCustomer(context.Context, *EnableCustomerRequest) (*EnableCustomerResponse, error)
 	DisableCustomer(context.Context, *DisableCustomerRequest) (*DisableCustomerResponse, error)
@@ -96,6 +108,9 @@ type UnimplementedCustomersServer struct {
 
 func (UnimplementedCustomersServer) RegisterCustomer(context.Context, *RegisterCustomerRequest) (*RegisterCustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterCustomer not implemented")
+}
+func (UnimplementedCustomersServer) AuthorizeCustomer(context.Context, *AuthorizeCustomerRequest) (*AuthorizeCustomerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthorizeCustomer not implemented")
 }
 func (UnimplementedCustomersServer) GetCustomer(context.Context, *GetCustomerRequest) (*GetCustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCustomer not implemented")
@@ -133,6 +148,24 @@ func _Customers_RegisterCustomer_Handler(srv interface{}, ctx context.Context, d
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CustomersServer).RegisterCustomer(ctx, req.(*RegisterCustomerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Customers_AuthorizeCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizeCustomerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustomersServer).AuthorizeCustomer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Customers_AuthorizeCustomer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustomersServer).AuthorizeCustomer(ctx, req.(*AuthorizeCustomerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -201,6 +234,10 @@ var Customers_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterCustomer",
 			Handler:    _Customers_RegisterCustomer_Handler,
+		},
+		{
+			MethodName: "AuthorizeCustomer",
+			Handler:    _Customers_AuthorizeCustomer_Handler,
 		},
 		{
 			MethodName: "GetCustomer",

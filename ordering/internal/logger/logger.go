@@ -10,10 +10,10 @@ import (
 
 type Application struct {
 	application.App
-	logger *zerolog.Logger
+	logger zerolog.Logger
 }
 
-func NewApplication(app application.App, logger *zerolog.Logger) *Application {
+func NewApplication(app application.App, logger zerolog.Logger) *Application {
 	return &Application{App: app, logger: logger}
 }
 
