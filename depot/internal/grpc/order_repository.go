@@ -3,8 +3,8 @@ package grpc
 import (
 	"context"
 
+	"github.com/hnamzian/go-mallbots/ordering/orderingpb"
 	"google.golang.org/grpc"
-	"github.com/hnamzian/go-mallbots/oerdering/orderingpb"
 )
 
 type OrderRepository struct {

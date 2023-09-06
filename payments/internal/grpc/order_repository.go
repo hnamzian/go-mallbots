@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	"github.com/hnamzian/go-mallbots/oerdering/orderingpb"
+	"github.com/hnamzian/go-mallbots/ordering/orderingpb"
 	"google.golang.org/grpc"
 )
 
@@ -19,8 +19,8 @@ func NewOrderRepository(conn *grpc.ClientConn) *OrderRepository {
 
 func (r OrderRepository) Complete(ctx context.Context, invoiceId, orderId string) error {
 	_, err := r.client.CompletedOrder(ctx, &orderingpb.CompletedOrderRequest{
-		Id: orderId,
-		InvoiceId: invoiceId,	
+		Id:        orderId,
+		InvoiceId: invoiceId,
 	})
 	return err
 }

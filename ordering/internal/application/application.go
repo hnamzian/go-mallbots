@@ -3,7 +3,7 @@ package application
 import (
 	"context"
 
-	"github.com/hnamzian/go-mallbots/oerdering/internal/domain"
+	"github.com/hnamzian/go-mallbots/ordering/internal/domain"
 	"github.com/stackus/errors"
 )
 
