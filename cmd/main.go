@@ -8,6 +8,7 @@ import (
 
 	baskets "github.com/hnamzian/go-mallbots/basket"
 	"github.com/hnamzian/go-mallbots/customers"
+	"github.com/hnamzian/go-mallbots/depot"
 	"github.com/hnamzian/go-mallbots/internal/config"
 	"github.com/hnamzian/go-mallbots/internal/logger"
 	"github.com/hnamzian/go-mallbots/internal/module"
@@ -48,6 +49,7 @@ func run() error {
 
 	app.modules = []module.Module{
 		customers.Module{},
+		depot.Module{},
 		stores.Module{},
 		baskets.Module{},
 		notifications.Module{},
