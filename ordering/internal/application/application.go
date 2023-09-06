@@ -18,6 +18,7 @@ type App interface {
 type Application struct {
 	orders        domain.OrderRepository
 	customers     domain.CustomerRepository
+	invoices      domain.InvoiceRepository
 	shoppings     domain.ShoppingRepository
 	payments      domain.PaymentRepository
 	notifications domain.NotificationRepository
@@ -48,6 +49,22 @@ type (
 		InvoiceID string
 	}
 )
+
+func NewOrderingApplication(orders domain.OrderRepository,
+	customers domain.CustomerRepository,
+	invoices domain.InvoiceRepository,
+	shoppings domain.ShoppingRepository,
+	payments domain.PaymentRepository,
+	notifications domain.NotificationRepository) *Application {
+	return &Application{
+		orders,
+		customers,
+		invoices,
+		shoppings,
+		payments,
+		notifications,
+	}
+}
 
 func (a *Application) CreateOrder(ctx context.Context, create CreateOrder) error {
 	order, err := domain.CreateOrder(create.ID, create.CustomerID, create.PaymentID, create.Items)
