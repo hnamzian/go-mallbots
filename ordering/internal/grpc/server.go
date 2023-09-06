@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/hnamzian/go-mallbots/oerdering/internal/application"
-	"github.com/hnamzian/go-mallbots/oerdering/internal/domain"
-	"github.com/hnamzian/go-mallbots/oerdering/orderingpb"
+	"github.com/hnamzian/go-mallbots/ordering/internal/application"
+	"github.com/hnamzian/go-mallbots/ordering/internal/domain"
+	"github.com/hnamzian/go-mallbots/ordering/orderingpb"
 )
 
 type Server struct {

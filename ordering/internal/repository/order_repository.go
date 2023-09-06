@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/hnamzian/go-mallbots/oerdering/internal/domain"
+	"github.com/hnamzian/go-mallbots/ordering/internal/domain"
 )
 
 type OrderRepository struct {
@@ -53,7 +53,7 @@ func (r OrderRepository) Find(ctx context.Context, id string) (*domain.Order, er
 	}
 
 	order.Status = domain.OrderStatus(status)
-	
+
 	return &order, nil
 }
 
