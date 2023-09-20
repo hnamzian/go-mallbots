@@ -6,4 +6,4 @@ grpc:
   host: "0.0.0.0"
   port: "9090"
 pg:
-  connection: "host=postgres dbname=mallbots user=mallbots_user password=mallbots_pass"
+  connection: "host=postgres dbname=mallbots user=mallbots_user password=itsasecret"
