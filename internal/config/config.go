@@ -6,14 +6,14 @@ import (
 
 	"github.com/spf13/viper"
 
+	"github.com/hnamzian/go-mallbots/internal/web"
 	"github.com/hnamzian/go-mallbots/internal/grpc"
-	"github.com/hnamzian/go-mallbots/internal/http"
 	"github.com/hnamzian/go-mallbots/internal/pg"
 )
 
 type AppConfig struct {
 	LogLevel string          `mapstructure:"logLevel"`
-	Http     http.HttpConfig `mapstructure:"http"`
+	Web      web.WebConfig   `mapstructure:"web"`
 	Grpc     grpc.GrpcConfig `mapstructure:"grpc"`
 	PG       pg.PGConfig     `mapstructure:"pg"`
 }
@@ -21,8 +21,8 @@ type AppConfig struct {
 func InitConfig() (*AppConfig, error) {
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
-        return nil, fmt.Errorf("CONFIG_PATH is not set")
-    }
+		return nil, fmt.Errorf("CONFIG_PATH is not set")
+	}
 	viper.SetConfigFile(configPath)
 
 	viper.SetDefault("logLevel", "debug")

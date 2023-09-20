@@ -79,9 +79,10 @@ func (a *App) closeDB() error {
 
 func (a *App) waitForWebServer(ctx context.Context) error {
 	server := http.Server{
-		Addr:    a.cfg.Http.Address(),
+		Addr:    a.cfg.Web.Address(),
 		Handler: a.mux,
 	}
+	fmt.Printf("web server address: %s\n", a.cfg.Web.Address())
 
 	group, gCtx := errgroup.WithContext(ctx)
 

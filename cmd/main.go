@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/go-chi/chi/v5"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"google.golang.org/grpc"
@@ -13,6 +16,7 @@ import (
 	"github.com/hnamzian/go-mallbots/internal/logger"
 	"github.com/hnamzian/go-mallbots/internal/module"
 	"github.com/hnamzian/go-mallbots/internal/waiter"
+	"github.com/hnamzian/go-mallbots/internal/web"
 	"github.com/hnamzian/go-mallbots/notifications"
 	"github.com/hnamzian/go-mallbots/ordering"
 	"github.com/hnamzian/go-mallbots/payments"
@@ -28,6 +32,7 @@ func run() error {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("config: %+v\n", cfg)
 	app := &App{
 		cfg: cfg,
 	}
@@ -47,6 +52,9 @@ func run() error {
 	reflection.Register(app.rpc)
 
 	app.mux = chi.NewMux()
+
+	// Mount general web resources
+	app.mux.Mount("/", http.FileServer(http.FS(web.WebUI)))
 
 	app.modules = []module.Module{
 		customers.Module{},
