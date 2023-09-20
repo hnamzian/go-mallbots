@@ -11,7 +11,7 @@ import (
 )
 
 func RegisterGateway(ctx context.Context, mux *chi.Mux, grpcAddr string) error {
-	apiRoot := "/api/v1/stores"
+	apiRoot := "/api/stores"
 
 	gateway := runtime.NewServeMux()
 	err := storespb.RegisterStoresHandlerFromEndpoint(ctx, gateway, grpcAddr, []grpc.DialOption{
