@@ -6,7 +6,7 @@ import (
 	"github.com/hnamzian/go-mallbots/internal/ddd"
 )
 
-type DomainHandlers interface {
+type DomainEventHandlers interface {
 	OnShoppingListCreated(context.Context, ddd.Event) error
 	OnShoppingListCancelled(context.Context, ddd.Event) error
 	OnShoppingListAssigned(context.Context, ddd.Event) error
@@ -15,7 +15,7 @@ type DomainHandlers interface {
 
 type ignoreUnimplementedDomainHandlers struct{}
 
-var _ DomainHandlers = (*ignoreUnimplementedDomainHandlers)(nil)
+var _ DomainEventHandlers = (*ignoreUnimplementedDomainHandlers)(nil)
 
 func (ignoreUnimplementedDomainHandlers) OnShoppingListCreated(context.Context, ddd.Event) error {
 	return nil
