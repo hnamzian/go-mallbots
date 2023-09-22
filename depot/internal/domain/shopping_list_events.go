@@ -8,11 +8,11 @@ func (e *ShoppingListCreated) EventName() string {
 	return "depot.ShoppingListCreated"
 }
 
-type ShoppingListCompeted struct {
+type ShoppingListCompleted struct {
 	ShoppingList *ShoppingList
 }
 
-func (e *ShoppingListCompeted) EventName() string {
+func (e *ShoppingListCompleted) EventName() string {
 	return "depot.ShoppingListCompleted"
 }
 
