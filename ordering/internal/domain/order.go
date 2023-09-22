@@ -37,28 +37,28 @@ func CreateOrder(id, customerID, paymentID string, items []Item) (*Order, error)
 		CustomerID: customerID,
 		PaymentID:  paymentID,
 		Items:      items,
-		Status:     OrderPending,
+		Status:     OrderIsPending,
 	}
 
 	return order, nil
 }
 
 func (o *Order) Cancel() error {
-	if o.Status != OrderPending {
+	if o.Status != OrderIsPending {
 		return ErrOrderCannotBeCancelled
 	}
-	o.Status = OrderCancelled
+	o.Status = OrderIsCancelled
 	return nil
 }
 
 func (o *Order) Complete(invoiceID string) error {
 	o.InvoiceID = invoiceID
-	o.Status = OrderCompleted
+	o.Status = OrderIsCompleted
 	return nil
 }
 
 func (o *Order) Ready() error {
-	o.Status = OrderReady
+	o.Status = OrderIsReady
 	return nil
 }
 

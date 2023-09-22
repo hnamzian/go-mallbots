@@ -4,16 +4,16 @@ type OrderStatus string
 
 const (
 	OrderUnknown   OrderStatus = "unknown"
-	OrderPending   OrderStatus = "pending"
-	OrderInProcess OrderStatus = "in_process"
-	OrderReady     OrderStatus = "ready"
-	OrderCompleted OrderStatus = "completed"
-	OrderCancelled OrderStatus = "cancelled"
+	OrderIsPending   OrderStatus = "pending"
+	OrderIsInProcess OrderStatus = "in_process"
+	OrderIsReady     OrderStatus = "ready"
+	OrderIsCompleted OrderStatus = "completed"
+	OrderIsCancelled OrderStatus = "cancelled"
 )
 
 func (s OrderStatus) String() string {
 	switch s {
-	case OrderPending, OrderInProcess, OrderReady, OrderCompleted, OrderCancelled:
+	case OrderIsPending, OrderIsInProcess, OrderIsReady, OrderIsCompleted, OrderIsCancelled:
 		return string(s)
 	default:
 		return string(OrderUnknown)
@@ -22,16 +22,16 @@ func (s OrderStatus) String() string {
 
 func ToOrderStatus(s string) OrderStatus {
 	switch s {
-	case OrderPending.String():
-		return OrderPending
-	case OrderInProcess.String():
-		return OrderInProcess
-	case OrderReady.String():
-		return OrderReady
-	case OrderCompleted.String():
-		return OrderCompleted
-	case OrderCancelled.String():
-		return OrderCancelled
+	case OrderIsPending.String():
+		return OrderIsPending
+	case OrderIsInProcess.String():
+		return OrderIsInProcess
+	case OrderIsReady.String():
+		return OrderIsReady
+	case OrderIsCompleted.String():
+		return OrderIsCompleted
+	case OrderIsCancelled.String():
+		return OrderIsCancelled
 	default:
 		return OrderUnknown
 	}
