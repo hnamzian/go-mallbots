@@ -10,7 +10,7 @@ type EventSubscriber interface {
 }
 
 type EventPublisher interface {
-	Publish(ctx context.Context, event Event) error
+	Publish(ctx context.Context, events ...Event) error
 }
 
 type EventDispatcher struct {
@@ -36,10 +36,12 @@ func (d *EventDispatcher) Subscribe(event Event, handler EventHandler) {
 	d.handlers[event.EventName()] = append(d.handlers[event.EventName()], handler)
 }
 
-func (d *EventDispatcher) Publish(ctx context.Context, event Event) error {
-	for _, handler := range d.handlers[event.EventName()] {
-		if err := handler(ctx, event); err != nil {
-			return err
+func (d *EventDispatcher) Publish(ctx context.Context, events ...Event) error {
+	for _, event := range events {
+		for _, handler := range d.handlers[event.EventName()] {
+			if err := handler(ctx, event); err != nil {
+				return err
+			}
 		}
 	}
 
