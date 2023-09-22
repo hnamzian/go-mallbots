@@ -6,6 +6,6 @@ import (
 	"github.com/hnamzian/go-mallbots/internal/ddd"
 )
 
-func RegisterOrderHandlers(domainSubscribe ddd.EventSubscriber, handlers application.OrderEventHandlers) {
+func RegisterOrderHandlers(handlers application.DomainEventHandlers, domainSubscribe ddd.EventSubscriber) {
 	domainSubscribe.Subscribe(&domain.ShoppingListCompleted{}, handlers.OnShoppingListCompleted)
 }

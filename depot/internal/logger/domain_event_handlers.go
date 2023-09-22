@@ -13,7 +13,7 @@ type DomainEventHandlers struct {
 	logger zerolog.Logger
 }
 
-func NewDomainEventHandlers(handlers DomainEventHandlers, logger zerolog.Logger) DomainEventHandlers {
+func NewDomainEventHandlers(handlers application.DomainEventHandlers, logger zerolog.Logger) DomainEventHandlers {
 	return DomainEventHandlers{
 		DomainEventHandlers: handlers,
 		logger:              logger,

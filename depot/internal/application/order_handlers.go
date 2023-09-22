@@ -9,15 +9,18 @@ import (
 
 type OrderEventHandlers struct {
 	orders domain.OrderRepository
+	ignoreUnimplementedDomainHandlers
 }
 
-func NewOrderEventHandlers(orders domain.OrderRepository) *OrderEventHandlers {
-	return &OrderEventHandlers{
+var _ DomainEventHandlers = (*OrderEventHandlers)(nil)
+
+func NewOrderEventHandlers(orders domain.OrderRepository) OrderEventHandlers {
+	return OrderEventHandlers{
 		orders: orders,
 	}
 }
 
-func (h *OrderEventHandlers) OnShoppingListCompleted(ctx context.Context, event ddd.Event) error {
+func (h OrderEventHandlers) OnShoppingListCompleted(ctx context.Context, event ddd.Event) error {
 	shopping := event.(*domain.ShoppingListCompleted)
 	return h.orders.Ready(ctx, shopping.ShoppingList.ID)
 }
