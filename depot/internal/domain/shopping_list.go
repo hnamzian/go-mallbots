@@ -12,7 +12,7 @@ var (
 type ShoppingListStatus string
 
 const (
-	ShoppingListUnknown   ShoppingListStatus = "unknown"
+	ShoppingListUnknown     ShoppingListStatus = "unknown"
 	ShoppingListIsAvailable ShoppingListStatus = "available"
 	ShoppingListIsAssigned  ShoppingListStatus = "assigned"
 	ShoppingListIsActive    ShoppingListStatus = "active"
@@ -92,6 +92,12 @@ func (sl *ShoppingList) AssignBot(id string) error {
 
 func (sl *ShoppingList) Complete() error {
 	sl.Status = ShoppingListIsCompleted
+
+	sl.AddEvent(
+		&ShoppingListCompleted{
+			ShoppingList: sl,
+		},
+	)
 
 	return nil
 }
