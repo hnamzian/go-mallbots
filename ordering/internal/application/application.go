@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 
+	"github.com/hnamzian/go-mallbots/internal/ddd"
 	"github.com/hnamzian/go-mallbots/ordering/internal/domain"
 	"github.com/stackus/errors"
 )
@@ -16,12 +17,11 @@ type App interface {
 }
 
 type Application struct {
-	orders        domain.OrderRepository
-	customers     domain.CustomerRepository
-	invoices      domain.InvoiceRepository
-	shoppings     domain.ShoppingRepository
-	payments      domain.PaymentRepository
-	notifications domain.NotificationRepository
+	orders          domain.OrderRepository
+	customers       domain.CustomerRepository
+	shoppings       domain.ShoppingRepository
+	payments        domain.PaymentRepository
+	domainPublisher ddd.EventPublisher
 }
 
 type (
@@ -52,17 +52,15 @@ type (
 
 func NewOrderingApplication(orders domain.OrderRepository,
 	customers domain.CustomerRepository,
-	invoices domain.InvoiceRepository,
 	shoppings domain.ShoppingRepository,
 	payments domain.PaymentRepository,
-	notifications domain.NotificationRepository) *Application {
+	domainPublisher ddd.EventPublisher) *Application {
 	return &Application{
 		orders,
 		customers,
-		invoices,
 		shoppings,
 		payments,
-		notifications,
+		domainPublisher,
 	}
 }
 
@@ -87,15 +85,13 @@ func (a *Application) CreateOrder(ctx context.Context, create CreateOrder) error
 		return errors.Wrap(err, "creating shopping")
 	}
 
-	// Notfiy Order Created
-	if err = a.notifications.NotifyOrderCreated(ctx, order.ID, order.CustomerID); err != nil {
-		return errors.Wrap(err, "notifying order created")
-	}
-
 	err = a.orders.Save(ctx, order)
 	if err != nil {
 		return errors.Wrap(err, "saving order")
 	}
+
+	// Publish Domain Events
+	a.domainPublisher.Publish(ctx, order.GetEvents()...)
 
 	return nil
 }
@@ -122,10 +118,8 @@ func (a *Application) CancelOrder(ctx context.Context, cancel CancelOrder) error
 		return errors.Wrap(err, "updating order")
 	}
 
-	// Notify Order Cancelled
-	if err = a.notifications.NotifyOrderCanceled(ctx, order.ID, order.CustomerID); err != nil {
-		return errors.Wrap(err, "notifying order cancelled")
-	}
+	// Publish Domain Events
+	a.domainPublisher.Publish(ctx, order.GetEvents()...)
 
 	return nil
 }
@@ -144,10 +138,8 @@ func (a *Application) ReadyOrder(ctx context.Context, ready ReadyOrder) error {
 		return errors.Wrap(err, "updating order")
 	}
 
-	// Notify Order Ready
-	if err = a.notifications.NotifyOrderReady(ctx, order.ID, order.CustomerID); err != nil {
-		return errors.Wrap(err, "notifying order ready")
-	}
+	// Publish Domain Events
+	a.domainPublisher.Publish(ctx, order.GetEvents()...)
 
 	return nil
 }
@@ -165,6 +157,9 @@ func (a *Application) CompletedOrder(ctx context.Context, complete CompletedOrde
 	if err = a.orders.Update(ctx, order); err != nil {
 		return errors.Wrap(err, "updating order")
 	}
+
+	// Publish Domain Events
+	a.domainPublisher.Publish(ctx, order.GetEvents()...)
 
 	return nil
 }
