@@ -17,7 +17,7 @@ func NewOrderEventHandlers(orders domain.OrderRepository) *OrderEventHandlers {
 	}
 }
 
-func (h *OrderEventHandlers) OnOrderCompleted(ctx context.Context, event ddd.Event) error {
+func (h *OrderEventHandlers) OnShoppingListCompleted(ctx context.Context, event ddd.Event) error {
 	shopping := event.(*domain.ShoppingListCompleted)
 	return h.orders.Ready(ctx, shopping.ShoppingList.ID)
 }
