@@ -1,6 +1,9 @@
 package domain
 
-import "github.com/stackus/errors"
+import (
+	"github.com/hnamzian/go-mallbots/internal/ddd"
+	"github.com/stackus/errors"
+)
 
 var (
 	ErrOrderHasNoItems         = errors.Wrap(errors.ErrBadRequest, "the order has no items")
@@ -10,7 +13,7 @@ var (
 )
 
 type Order struct {
-	ID         string
+	ddd.AggregateBase
 	CustomerID string
 	PaymentID  string
 	InvoiceID  string
@@ -33,12 +36,14 @@ func CreateOrder(id, customerID, paymentID string, items []Item) (*Order, error)
 	}
 
 	order := &Order{
-		ID:         id,
-		CustomerID: customerID,
-		PaymentID:  paymentID,
-		Items:      items,
-		Status:     OrderIsPending,
+		AggregateBase: ddd.AggregateBase{ID: id},
+		CustomerID:    customerID,
+		PaymentID:     paymentID,
+		Items:         items,
+		Status:        OrderIsPending,
 	}
+
+	order.AddEvent(&OrderCreated{Order: order})
 
 	return order, nil
 }
@@ -48,25 +53,33 @@ func (o *Order) Cancel() error {
 		return ErrOrderCannotBeCancelled
 	}
 	o.Status = OrderIsCancelled
+
+	o.AddEvent(&OrderCancelled{Order: o})
+
 	return nil
 }
 
 func (o *Order) Complete(invoiceID string) error {
 	o.InvoiceID = invoiceID
 	o.Status = OrderIsCompleted
+
+	o.AddEvent(&OrderCompleted{Order: o})
+
 	return nil
 }
 
 func (o *Order) Ready() error {
 	o.Status = OrderIsReady
+
+	o.AddEvent(&OrderReadied{Order: o})
+
 	return nil
 }
 
 func (o *Order) GetTotal() float64 {
 	total := float64(0)
-	for _, item := range(o.Items) {
-		total += item.Price * float64(item.Quantity) 
+	for _, item := range o.Items {
+		total += item.Price * float64(item.Quantity)
 	}
-	
 	return total
 }
