@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/hnamzian/go-mallbots/depot/internal/domain"
+	"github.com/hnamzian/go-mallbots/internal/ddd"
 )
 
 type ShoppingListRepository struct {
@@ -25,7 +26,7 @@ func (r *ShoppingListRepository) Find(ctx context.Context, id string) (*domain.S
 	query := fmt.Sprintf("SELECT order_id, stops, assigned_bot_id, status FROM %s WHERE id = $1 LIMIT 1", r.tableName)
 
 	shopping := &domain.ShoppingList{
-		ID: id,
+		AggregateBase: ddd.AggregateBase{ID: id},
 	}
 	var stops []byte
 	var status string

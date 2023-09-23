@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/hnamzian/go-mallbots/basket/internal/domain"
+	"github.com/hnamzian/go-mallbots/internal/ddd"
 )
 
 type App interface {
@@ -16,9 +17,10 @@ type App interface {
 }
 
 type Application struct {
-	baskets  domain.BasketRepository
-	products domain.ProductRepository
-	stores   domain.StoreRepository
+	baskets         domain.BasketRepository
+	products        domain.ProductRepository
+	stores          domain.StoreRepository
+	domainPublisher ddd.EventPublisher
 }
 
 type (
@@ -55,20 +57,26 @@ type (
 	}
 )
 
-func NewApplication(baskets domain.BasketRepository, products domain.ProductRepository, stores domain.StoreRepository) Application {
+func NewApplication(baskets domain.BasketRepository, products domain.ProductRepository, stores domain.StoreRepository, domainPublisher ddd.EventPublisher) Application {
 	return Application{
 		baskets,
 		products,
 		stores,
+		domainPublisher,
 	}
 }
 
 func (a Application) StartBasket(ctx context.Context, start *StartBasket) error {
-	basket := domain.StartBasket(start.ID, start.CustomerID)
+	basket, err := domain.StartBasket(start.ID, start.CustomerID)
+	if err != nil {
+		return err
+	}
 
 	if err := a.baskets.Save(ctx, basket); err != nil {
 		return err
 	}
+
+	a.domainPublisher.Publish(ctx, basket.GetEvents()...)
 
 	return nil
 }
@@ -87,6 +95,8 @@ func (a Application) CancelBasket(ctx context.Context, cancel *CancelBasket) err
 		return nil
 	}
 
+	a.domainPublisher.Publish(ctx, basket.GetEvents()...)
+
 	return nil
 }
 
@@ -103,6 +113,8 @@ func (a Application) CheckoutBasket(ctx context.Context, checkout CheckoutBasket
 	if err = a.baskets.Update(ctx, basket); err != nil {
 		return nil
 	}
+
+	a.domainPublisher.Publish(ctx, basket.GetEvents()...)
 
 	return nil
 }
@@ -127,6 +139,8 @@ func (a Application) AddItem(ctx context.Context, add *AddItem) error {
 		return err
 	}
 
+	a.domainPublisher.Publish(ctx, basket.GetEvents()...)
+
 	return nil
 }
 
@@ -144,6 +158,8 @@ func (a Application) RemoveItem(ctx context.Context, remove *RemoveItem) error {
 	if err = basket.RemoveItem(product, remove.Quantity); err != nil {
 		return err
 	}
+
+	a.domainPublisher.Publish(ctx, basket.GetEvents()...)
 
 	return nil
 }

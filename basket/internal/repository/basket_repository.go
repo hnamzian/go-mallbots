@@ -96,12 +96,12 @@ func (r BasketRepository) Delete(ctx context.Context, id string) error {
 
 func statusToDomain(status string) (domain.BasketStatus, error) {
 	switch status {
-	case domain.BasketOpen.String():
-		return domain.BasketOpen, nil
-	case domain.BasketCancelled.String():
-		return domain.BasketCancelled, nil
-	case domain.BasketCheckedOut.String():
-		return domain.BasketCheckedOut, nil
+	case domain.BasketIsOpen.String():
+		return domain.BasketIsOpen, nil
+	case domain.BasketIsCancelled.String():
+		return domain.BasketIsCancelled, nil
+	case domain.BasketIsCheckedOut.String():
+		return domain.BasketIsCheckedOut, nil
 	default:
 		return domain.BasketUnknown, fmt.Errorf("unknown basket status: %s", status)
 	}
