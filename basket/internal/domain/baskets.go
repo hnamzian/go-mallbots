@@ -3,6 +3,7 @@ package domain
 import (
 	"sort"
 
+	"github.com/hnamzian/go-mallbots/internal/ddd"
 	"github.com/stackus/errors"
 )
 
@@ -19,15 +20,15 @@ var (
 )
 
 const (
-	BasketUnknown    BasketStatus = "Unknown"
-	BasketOpen       BasketStatus = "Open"
-	BasketCancelled  BasketStatus = "Cancelled"
-	BasketCheckedOut BasketStatus = "CheckedOut"
+	BasketUnknown      BasketStatus = "Unknown"
+	BasketIsOpen       BasketStatus = "Open"
+	BasketIsCancelled  BasketStatus = "Cancelled"
+	BasketIsCheckedOut BasketStatus = "CheckedOut"
 )
 
 func (s BasketStatus) String() string {
 	switch s {
-	case BasketOpen, BasketCancelled, BasketCheckedOut:
+	case BasketIsOpen, BasketIsCancelled, BasketIsCheckedOut:
 		return string(s)
 	default:
 		return ""
@@ -35,7 +36,7 @@ func (s BasketStatus) String() string {
 }
 
 type Basket struct {
-	ID         string
+	ddd.AggregateBase
 	CustomerID string
 	PaymentID  string
 	Items      []Item
@@ -44,23 +45,23 @@ type Basket struct {
 
 func StartBasket(id, customerID string) *Basket {
 	return &Basket{
-		ID:         id,
-		CustomerID: customerID,
-		Status:     BasketOpen,
+		AggregateBase: ddd.AggregateBase{ID: id},
+		CustomerID:    customerID,
+		Status:        BasketIsOpen,
 	}
 }
 
 func (b *Basket) IsOpen() bool {
-	return b.Status == BasketOpen
+	return b.Status == BasketIsOpen
 }
 
 func (b *Basket) IsCancellable() bool {
-	return b.Status == BasketOpen
+	return b.Status == BasketIsOpen
 }
 
 func (b *Basket) Cancel() error {
 	if b.IsCancellable() {
-		b.Status = BasketCancelled
+		b.Status = BasketIsCancelled
 		return nil
 	}
 	return ErrBasketCannotBeCancelled
@@ -80,7 +81,7 @@ func (b *Basket) Checkout(paymentID string) error {
 	}
 
 	b.PaymentID = paymentID
-	b.Status = BasketCheckedOut
+	b.Status = BasketIsCheckedOut
 
 	return nil
 }
