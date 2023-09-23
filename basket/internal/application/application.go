@@ -64,7 +64,10 @@ func NewApplication(baskets domain.BasketRepository, products domain.ProductRepo
 }
 
 func (a Application) StartBasket(ctx context.Context, start *StartBasket) error {
-	basket := domain.StartBasket(start.ID, start.CustomerID)
+	basket, err := domain.StartBasket(start.ID, start.CustomerID)
+	if err != nil {
+		return err
+	}
 
 	if err := a.baskets.Save(ctx, basket); err != nil {
 		return err
