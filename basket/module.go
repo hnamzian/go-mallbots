@@ -29,7 +29,7 @@ func (m Module) Startup(ctx context.Context, core module.Core) error {
 	orders := grpc.NewOrderRepository(conn)
 
 	var app application.App
-	app = application.NewApplication(baskets, products, stores)
+	app = application.NewApplication(baskets, products, stores, domainEventDispatcher)
 	app = logger.NewApplication(core.Logger(), app)
 
 	grpc.RegisterServer(core.RPC(), app)
